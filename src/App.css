@@ -1,38 +1,330 @@
+/* src/App.css */
+
+/* Estilos Generales */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+/* --- Login Page --- */
+.login-container {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  min-height: 100vh;
+  background-color: #007bff; /* Color de fondo de la app */
+}
+
+.login-box {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.login-button {
+  background-color: #007bff;
   color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  width: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.login-button:hover {
+  background-color: #0056b3;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.error-message {
+  color: #dc3545;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* --- Navbar --- */
+.navbar {
+  background-color: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+.navbar-brand a {
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.menu-icon {
+  display: none; /* Oculto por defecto en desktop */
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  margin-left: 25px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+.welcome-user {
+  color: #a0d8ff;
+  font-size: 17px;
+}
+
+/* Menú Hamburguesa Responsive */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block; /* Muestra el icono de hamburguesa en pantallas pequeñas */
   }
-  to {
-    transform: rotate(360deg);
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    display: none; /* Oculto por defecto en móvil */
+    background-color: #444;
+    position: absolute;
+    top: 60px; /* Ajusta según la altura de tu navbar */
+    left: 0;
+    z-index: 1000;
+    padding: 10px 0;
   }
+
+  .nav-links.active {
+    display: flex; /* Muestra el menú cuando está activo */
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+    text-align: center;
+  }
+}
+
+/* --- Landing Page --- */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-content {
+  flex-grow: 1; /* Para que el contenido ocupe el espacio restante */
+  padding: 50px 20px;
+  background-color: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.landing-content h1 {
+  font-size: 3em;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.landing-content p {
+  font-size: 1.2em;
+  color: #7f8c8d;
+  max-width: 700px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.landing-actions .btn-primary {
+  background-color: #28a745; /* Un verde vibrante */
+  color: white;
+  padding: 15px 30px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+}
+
+.landing-actions .btn-primary:hover {
+  background-color: #218838;
+}
+
+/* --- Product Page --- */
+.products-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.products-header {
+  background-color: #e9ecef;
+  padding: 40px 20px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.products-header h1 {
+  font-size: 2.5em;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+.products-header p {
+  font-size: 1.1em;
+  color: #6c757d;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Columnas responsivas */
+  gap: 30px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-grow: 1; /* Para que el contenido ocupe el espacio restante */
+}
+
+/* --- Product Card --- */
+.product-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-image {
+  max-width: 100%;
+  height: 200px; /* Altura fija para las imágenes */
+  object-fit: cover; /* Recorta la imagen para que quepa */
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.product-name {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 15px;
+  flex-grow: 1; /* Para que la descripción ocupe el espacio */
+}
+
+.product-price {
+  font-size: 1.3em;
+  color: #007bff;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.add-to-cart-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #218838;
+}
+
+/* --- Footer --- */
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  margin-top: auto; /* Empuja el footer hacia abajo */
+  width: 100%;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+/* Mensajes de carga/error */
+.loading-message, .error-message {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #555;
+}
+.error-message {
+  color: #dc3545;
 }
