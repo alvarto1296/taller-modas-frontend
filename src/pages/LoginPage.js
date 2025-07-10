@@ -1,6 +1,6 @@
 // src/pages/LoginPage.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; // Importa useEffect
+import { useNavigate, Link, useLocation } from 'react-router-dom'; // Importa useLocation
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
 
@@ -9,57 +9,98 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth(); // Obtener la función login del contexto
+    const { login, storeAuthData } = useAuth(); // Asume que tienes una función storeAuthData en tu AuthContext
+    const location = useLocation(); // Hook para acceder a la URL
 
-    const handleSubmit = async (e) => { // ¡ASEGÚRATE DE QUE ES 'async'!
+    // Manejar la redirección de OAuth2 cuando el componente se monta
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+        const user = params.get('user'); // El nombre de usuario/email que el backend te envía
+
+        if (token && user) {
+            console.log('Token y usuario recibidos de OAuth2:', { token, user });
+            // Almacena el token y el usuario en tu contexto de autenticación
+            // Esto reemplaza lo que harías después de un login normal
+            storeAuthData(token, user); // Asegúrate de que esta función exista en tu AuthContext
+            
+            // Limpia los parámetros de la URL para que no queden expuestos
+            navigate('/landing', { replace: true }); // Redirige y reemplaza la entrada en el historial
+        }
+    }, [location, navigate, storeAuthData]); // Dependencias para el useEffect
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Limpiar errores anteriores
+        setError('');
         try {
-            const success = await login(username, password); // Await para esperar la promesa
+            const success = await login(username, password);
             if (success) {
-                console.log('Login exitoso, redirigiendo a /landing'); // Para depuración
-                navigate('/landing'); // <-- Esta es la línea clave de redirección
+                console.log('Login exitoso, redirigiendo a /landing');
+                navigate('/landing');
             } else {
-                // Si `login` devuelve false (aunque con el actual `AuthContext` si hay error, lanza excepción)
-                // Esto podría ser útil si tu `login` no lanza excepción sino que retorna `false` en caso de fallo
                 setError('Credenciales inválidas. Por favor, inténtalo de nuevo.');
             }
         } catch (err) {
-            // Capturar errores lanzados por la función `login` (ej. problemas de conexión, errores del servidor)
-            console.error('Error durante el login:', err); // Para depuración
+            console.error('Error durante el login:', err);
             setError(err.message || 'Ocurrió un error inesperado al iniciar sesión.');
         }
     };
 
+    const handleGoogleLogin = () => {
+        // Redirige al backend para iniciar el flujo de OAuth2 con Google
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    };
+
     return (
-        // ... (resto del JSX del LoginPage)
-        <div className="login-container">
+        <div className="login-page-container">
             <div className="login-box">
-                <h2>Iniciar Sesión</h2>
+                <h2>Welcome Back</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <label htmlFor="username">Usuario:</label>
+                        <label htmlFor="username">Username or Email</label>
                         <input
                             type="text"
                             id="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter your username or email"
                             required
                         />
                     </div>
                     <div className="input-group">
-                        <label htmlFor="password">Contraseña:</label>
+                        <label htmlFor="password">Password</label>
                         <input
                             type="password"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
                             required
                         />
                     </div>
+                    <div className="forgot-password">
+                        <Link to="/forgot-password">Forgot Password?</Link>
+                    </div>
                     {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="login-button">Entrar</button>
+                    <button type="submit" className="login-form-button">Log In</button>
+                    <div className="create-account">
+                        Don't have an account? <Link to="/register">Create Account</Link>
+                    </div>
                 </form>
+
+                {/* --- Botón de Google --- */}
+                <div className="separator">
+                    <span>OR</span>
+                </div>
+                <button
+                    type="button"
+                    className="google-login-button"
+                    onClick={handleGoogleLogin}
+                >
+                    <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon" />
+                    Sign in with Google
+                </button>
+                {/* --- Fin Botón de Google --- */}
             </div>
         </div>
     );

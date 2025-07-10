@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react'; // Importa useCallback
 
 // Crea el contexto de autenticación
 const AuthContext = createContext(null);
@@ -22,7 +22,25 @@ export const AuthProvider = ({ children }) => {
         return localStorage.getItem('token');
     });
 
-    // Efecto para sincronizar el estado con localStorage
+    // Función unificada para almacenar datos de autenticación
+    // Se usa useCallback para evitar renderizados innecesarios y para que pueda ser una dependencia de useEffect
+    const storeAuthData = useCallback((jwtToken, userData) => {
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify({ username: userData })); // Guarda el nombre de usuario como objeto { username: "..." }
+        localStorage.setItem('token', jwtToken);
+
+        setIsAuthenticated(true);
+        setUser({ username: userData });
+        setToken(jwtToken);
+        console.log("AuthContext: Datos de autenticación almacenados.");
+    }, []); // Dependencias vacías porque no depende de props o estados externos
+
+    // No necesitamos un useEffect separado para sincronizar con localStorage *si*
+    // las funciones `storeAuthData` y `logout` son las únicas que modifican los estados `isAuthenticated`, `user`, `token`.
+    // La inicialización ya lee de localStorage.
+    // El useEffect que tenías antes está bien si quieres una doble verificación,
+    // pero `storeAuthData` y `logout` ya manipulan directamente `localStorage`.
+    // Por simplicidad, lo dejo como lo tenías, pero el useCallback es crucial para `storeAuthData`.
     useEffect(() => {
         localStorage.setItem('isAuthenticated', isAuthenticated);
         if (user) {
@@ -37,7 +55,8 @@ export const AuthProvider = ({ children }) => {
         }
     }, [isAuthenticated, user, token]);
 
-    // Función para realizar el login
+
+    // Función para realizar el login local
     const login = async (username, password) => {
         try {
             const response = await fetch(API_LOGIN_URL, {
@@ -48,29 +67,25 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ userName: username, password: password }),
             });
 
-            // Verificar si la respuesta fue exitosa (código 2xx)
             if (response.ok) {
                 const data = await response.json();
-                // Asumiendo que tu backend devuelve un objeto con 'token' y 'userName'
-                // ajusta esto según la respuesta real de tu API
-                const receivedToken = data.token; // Por ejemplo, si tu token viene en una propiedad 'token'
-                const receivedUserName = data.userName; // O el nombre de usuario de la respuesta
+                console.log('Datos de login regular recibidos:', data);
 
-                setIsAuthenticated(true);
-                setUser({ username: receivedUserName || username }); // Usar el username de la respuesta o el enviado
-                setToken(receivedToken); // Almacena el token
+                const receivedToken = data.jwt; // Asumiendo que el login local devuelve 'jwt'
+                const receivedUserName = data.user; // Asumiendo que el login local devuelve 'user'
+
+                // Usamos la función unificada para almacenar los datos
+                storeAuthData(receivedToken, receivedUserName); 
                 return true; // Login exitoso
             } else {
-                // Manejar errores de respuesta del servidor (ej. 401 Unauthorized, 400 Bad Request)
-                const errorData = await response.json(); // Intentar parsear el cuerpo del error
+                const errorData = await response.json();
                 console.error('Error de autenticación:', errorData.message || response.statusText);
                 setIsAuthenticated(false);
                 setUser(null);
                 setToken(null);
-                throw new Error(errorData.message || 'Credenciales inválidas'); // Propagar el error
+                throw new Error(errorData.message || 'Credenciales inválidas');
             }
         } catch (error) {
-            // Manejar errores de red o cualquier otra excepción
             console.error('Error al intentar iniciar sesión:', error);
             setIsAuthenticated(false);
             setUser(null);
@@ -80,18 +95,18 @@ export const AuthProvider = ({ children }) => {
     };
 
     // Función para el logout
-    const logout = () => {
+    const logout = useCallback(() => {
         setIsAuthenticated(false);
         setUser(null);
-        setToken(null); // Limpiar el token al cerrar sesión
-        // Limpiar también del almacenamiento local
+        setToken(null);
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-    };
+        console.log("AuthContext: Sesión cerrada.");
+    }, []); // Dependencias vacías, no depende de props o estados externos
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout, storeAuthData }}>
             {children}
         </AuthContext.Provider>
     );
@@ -99,5 +114,9 @@ export const AuthProvider = ({ children }) => {
 
 // Hook personalizado para usar el contexto de autenticación
 export const useAuth = () => {
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };
