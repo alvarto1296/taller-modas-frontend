@@ -1,9 +1,10 @@
-// src/components/Navbar.jsimport React, { useState } from 'react';
-import React, { useState } from 'react'; // <--- ¡Asegúrate de que 'useState' esté aquí!
+// src/components/Navbar.js
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
+import logo from '../rgs.png'; // Importamos el logo desde la carpeta assets
 import '../App.css'; // Para los estilos de la navbar y el menú
 
 const Navbar = () => {
@@ -17,7 +18,7 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/landing">Fashion Studio</Link>
+                <Link to="/landing"><img src={logo} alt="Fashion Studio Logo" className="navbar-logo" /></Link>
             </div>
             <div className="menu-icon" onClick={toggleMenu}>
                 <FontAwesomeIcon icon={isOpen ? faTimes : faBars} />

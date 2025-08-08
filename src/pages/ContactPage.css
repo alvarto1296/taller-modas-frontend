@@ -1,0 +1,94 @@
+/* Estilos específicos para ContactPage.js */
+
+/* La cabecera de la página */
+.contact-header {
+    background-color: #343a40;
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.contact-header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.contact-header p {
+    font-size: 1.2em;
+    color: #e9ecef;
+}
+
+/* Contenedor principal del contenido */
+.contact-content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilo de "tarjeta" para las secciones de formulario y redes sociales */
+.contact-form-section,
+.contact-social-section {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.contact-form-section {
+    flex: 2;
+    min-width: 320px;
+}
+
+.contact-social-section {
+    flex: 1;
+    min-width: 320px;
+}
+
+.contact-form-section h2,
+.contact-social-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Estilos del formulario */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Sección de redes sociales */
+.contact-social-section p {
+    margin-bottom: 2rem;
+    color: #6c757d;
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 992px) {
+    .contact-content-wrapper {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-header {
+        padding: 3rem 1rem;
+    }
+    .contact-header h1 {
+        font-size: 2.2rem;
+    }
+    .contact-content-wrapper {
+        padding: 2rem 1rem;
+    }
+    .contact-form-section,
+    .contact-social-section {
+        padding: 1.5rem;
+    }
+}
